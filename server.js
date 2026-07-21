@@ -6,8 +6,16 @@ require('dotenv').config();
 const app = express();
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
+
+app.use(cors({
+  origin: [
+    'https://travel-frontend-nu-gilt.vercel.app', // Aapka live frontend URL
+    'http://localhost:5173'
+  ],
+  credentials: true
+}));
+
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
@@ -27,10 +35,6 @@ transporter.verify((error) => {
   }
 });
 
-// Test Route
-app.get('/', (req, res) => {
-  res.send('JCED Backend API is Running Successfully!');
-});
 
 // ----------------------------------------------------
 // 1. API Route for Reservation Inquiry
@@ -368,8 +372,18 @@ app.post('/api/send-reservation', async (req, res) => {
   }
 });
 
+
+
+// Test Route (Health Check)
+app.get('/', (req, res) => {
+  res.send('Travel Backend API is Running Successfully!');
+});
+
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+module.exports = app; // Vercel serverless functions ke liye
